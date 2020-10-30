@@ -2,6 +2,7 @@
 #define JSON_HPP
 
 #include <map>
+#include <regex>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -37,10 +38,10 @@ class Json
     {
       return iMap[key];
     }
-  
+
     void SetKey(const std::string& key, const std::string& value)
     {
-      iMap[key] = value;
+      iMap[key] = std::regex_replace(value, std::regex(R"(\\)"), R"(\\)");
     }
 
     bool HasKey(const std::string& key)
