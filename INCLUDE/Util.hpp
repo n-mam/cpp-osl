@@ -47,4 +47,37 @@ void LTOB(uint64_t value, unsigned char *memory, int size)
   }
 }
 
+void LTOB16(uint64_t value, unsigned char *memory)
+{
+  LTOB(value, memory, 2);
+}
+void LTOB32(uint64_t value, unsigned char *memory)
+{
+  LTOB(value, memory, 4);
+}
+void LTOB64(uint64_t value, unsigned char *memory)
+{
+  LTOB(value, memory, 8);
+}
+uint16_t BTOL16(const uint8_t *msb)
+{
+  return static_cast<uint16_t>(BTOL(msb, 2));
+}
+uint32_t BTOL32(const uint8_t *msb)
+{
+  return static_cast<uint32_t>(BTOL(msb, 4));
+}
+uint64_t BTOL64(const uint8_t *msb)
+{
+  return BTOL(msb, 8);
+}
+
+void DumpData(const std::string& file, const uint8_t *b, uint64_t l)
+{
+  FILE * pFile;
+  fopen_s(&pFile, file.c_str(), "wb");
+  fwrite (b, 1, l, pFile);
+  fclose (pFile);
+}
+
 #endif
