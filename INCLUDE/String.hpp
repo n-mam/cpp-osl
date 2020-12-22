@@ -1,6 +1,7 @@
 #ifndef STRING_HPP
 #define STRING_HPP
 
+#include <vector>
 #include <sstream>
 
 std::vector<std::string> split(const std::string &s, char delim)
@@ -17,7 +18,7 @@ std::vector<std::string> split(const std::string &s, char delim)
   return elems;
 }
 
-std::vector<std::string> split (std::string s, std::string delim) 
+std::vector<std::string> split(std::string s, std::string delim) 
 {
     size_t pos_start = 0, pos_end, delim_len = delim.length();
     std::string token;
@@ -46,7 +47,7 @@ std::string& rtrim(std::string& str, const std::string& chars)
     str.erase(str.find_last_not_of(chars) + 1);
     return str;
 }
- 
+
 std::string& trim(std::string& str, const std::string& chars)
 {
     return ltrim(rtrim(str, chars), chars);
