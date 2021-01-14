@@ -7,7 +7,7 @@
 #include <vector>
 #include <sstream>
 
-#include <String.hpp>
+#include <string.hpp>
 
 class Json
 {

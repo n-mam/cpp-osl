@@ -1,7 +1,7 @@
 #ifndef OSL_HPP
 #define OSL_HPP
 
-#include <Json.hpp>
+#include <json.hpp>
 
 #include <filesystem>
 
