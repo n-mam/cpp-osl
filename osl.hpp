@@ -32,7 +32,7 @@ namespace OSL
       list.push_back(j);
     }
 
-    json.SetKey("list", Json::JsonListToArray(list));
+    json.SetKey("List", Json::JsonListToArray(list));
   }
 
   void GetSnapshotList(Json& json)
