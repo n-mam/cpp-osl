@@ -10,11 +10,11 @@ namespace OSL
 {
   void GetVolumeList(Json& json)
   {
-    std::vector<Json> volumes;
+    std::vector<Json> list;
 
-    auto list = EnumerateVolumes();
+    auto volumes = EnumerateVolumes();
 
-    for(auto& names : list)
+    for(auto& names : volumes)
     {
       Json j;
 
@@ -29,10 +29,10 @@ namespace OSL
 
       j.SetKey("paths", rtrim(paths, " "));
 
-      volumes.push_back(j);
+      list.push_back(j);
     }
 
-    json.SetKey("volumes", Json::JsonListToArray(volumes));
+    json.SetKey("list", Json::JsonListToArray(list));
   }
 
   void GetSnapshotList(Json& json)
