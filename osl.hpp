@@ -7,60 +7,58 @@
 
 namespace OSL
 {
-
-void GetVolumeList(Json& json)
-{
-
-}
-
-void GetSnapshotList(Json& json)
-{
-
-}
-
-void GetDirectoryList(Json& json)
-{
-  std::string dir;
-
-  if (json.HasKey("Directory"))
+  void GetVolumeList(Json& json)
   {
-    dir = json.GetKey("Directory");
+
   }
 
-  if (!dir.size())
+  void GetSnapshotList(Json& json)
   {
-    dir = std::filesystem::current_path().string();
+
   }
 
-  std::vector<Json> list;
-
-  for (auto& e : std::filesystem::directory_iterator(dir))
+  void GetDirectoryList(Json& json)
   {
-    Json j;
+    std::string dir;
 
-    j.SetKey("name", e.path().filename().string());
+    if (json.HasKey("Directory"))
+    {
+      dir = json.GetKey("Directory");
+    }
+
+    if (!dir.size())
+    {
+      dir = std::filesystem::current_path().string();
+    }
+
+    std::vector<Json> list;
+
+    for (auto& e : std::filesystem::directory_iterator(dir))
+    {
+      Json j;
+
+      j.SetKey("name", e.path().filename().string());
     
-    if (std::filesystem::is_directory(e))
-    {
-      j.SetKey("type", "directory");
-    }
-    else
-    {
-      j.SetKey("type", "file");
+      if (std::filesystem::is_directory(e))
+      {
+        j.SetKey("type", "directory");
+      }
+      else
+      {
+        j.SetKey("type", "file");
+      }
+
+     list.push_back(j);
     }
 
-    list.push_back(j);
+    json.SetKey("Directory", dir);
+    json.SetKey("List", Json::JsonListToArray(list));
   }
 
-  json.SetKey("Directory", dir);
-  json.SetKey("List", Json::JsonListToArray(list));
-}
+  void GetFreeDriveList(Json& json)
+  {
 
-void GetFreeDriveList(Json& json)
-{
-
-}
-
+  }
 }
 
 #endif //OSL_HPP
