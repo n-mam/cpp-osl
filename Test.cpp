@@ -13,5 +13,11 @@ int main(void)
     std::cout << "\n";
   }
 
+  Json json;
+
+  OSL::GetVolumeList(json);
+
+  std::cout << json.Stringify() << "\n";
+
   return 0;
 }
