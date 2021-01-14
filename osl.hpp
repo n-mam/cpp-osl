@@ -2,6 +2,7 @@
 #define OSL_HPP
 
 #include <json.hpp>
+#include <util.hpp>
 
 #include <filesystem>
 
@@ -9,7 +10,7 @@ namespace OSL
 {
   void GetVolumeList(Json& json)
   {
-
+    EnumerateVolumes();
   }
 
   void GetSnapshotList(Json& json)

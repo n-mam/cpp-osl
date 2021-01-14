@@ -1,8 +1,11 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
+#include <windows.h>
+
 #include <string>
 #include <cstdint>
+#include <iostream>
 #include <assert.h>
 
 uint64_t BTOL(const uint8_t *msb, uint8_t size)
@@ -78,6 +81,65 @@ void DumpData(const std::string& file, const uint8_t *b, uint64_t l)
   fopen_s(&pFile, file.c_str(), "wb");
   fwrite (b, 1, l, pFile);
   fclose (pFile);
+}
+
+auto EnumerateVolumes(void)
+{
+  char _guid[128];
+  BOOL fRet = TRUE;
+  char _buf[MAX_PATH];
+  DWORD nReturned = 0;
+
+  std::vector<std::vector<std::string>> out;
+
+  HANDLE hFind = FindFirstVolumeA(_guid, sizeof(_guid) / sizeof(char));
+
+  if (hFind == INVALID_HANDLE_VALUE)
+  {
+    std::cout << "FindFirstVolumeW failed, error " << GetLastError() << "\n";
+    return out;
+  }
+
+  do
+  {
+    std::vector<std::string> names = { _guid };
+
+    fRet = GetVolumePathNamesForVolumeNameA(
+      _guid,
+      _buf,
+      MAX_PATH,
+      &nReturned);
+
+    if (!fRet)
+    {
+      std::cout << "GetVolumePathNamesForVolumeNameA failed, error " << GetLastError() << "\n";
+    }
+
+    char *path = _buf;
+
+    while (*path)
+    {
+      names.push_back(path);
+      path += strlen(path) + 1;
+    }
+
+    out.push_back(names);
+
+    fRet = FindNextVolumeA(hFind, _guid, sizeof(_guid) / sizeof(char));
+
+    if (!fRet) 
+    {
+      if (GetLastError() != ERROR_NO_MORE_FILES) 
+      {
+        std::cout << "FindNextVolumeA failed, error : " << GetLastError() << "\n";
+      }
+    }
+
+  } while(fRet);
+
+  FindVolumeClose(hFind);
+
+  return out;
 }
 
 #endif
