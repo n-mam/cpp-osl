@@ -3,6 +3,7 @@
 
 #include <json.hpp>
 #include <util.hpp>
+#include <osd.hpp>
 
 #include <filesystem>
 

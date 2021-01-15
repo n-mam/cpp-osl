@@ -2,7 +2,7 @@
 
 int main(void)
 {
-  auto list = EnumerateVolumes();
+  auto list = OSL::EnumerateVolumes();
 
   for(auto& names : list)
   {
