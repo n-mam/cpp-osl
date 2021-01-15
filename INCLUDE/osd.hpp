@@ -4,7 +4,6 @@
 #include <virtdisk.h>
 
 #include <string>
-#include <tuple>
 #include <iostream>
 
 namespace OSL
@@ -114,6 +113,7 @@ namespace OSL
 
       if (fRet)
       {
+        // DumpData("bitmap", bitmap->Buffer, (bitmap->BitmapSize.QuadPart)/8 + ( ((bitmap->BitmapSize.QuadPart)%8) ? 1 : 0 ));
         return bitmap;
       }
       else if (GetLastError() != ERROR_MORE_DATA)
@@ -127,8 +127,7 @@ namespace OSL
     }
   }
 
-  std::tuple<NTFS_VOLUME_DATA_BUFFER, PVOLUME_BITMAP_BUFFER> 
-    ProcessSourceVolume(HANDLE hDevice)
+  NTFS_VOLUME_DATA_BUFFER GetNTFSVolumeData(HANDLE hDevice)
   {
     DWORD fRet, BytesReturned;
     NTFS_VOLUME_DATA_BUFFER nvdb = {0};
@@ -165,17 +164,7 @@ namespace OSL
       return {};
     }
 
-    auto bitmap = GetVolumeInUseBitmap(hDevice);
-
-    if ((bitmap->BitmapSize).QuadPart != nvdb.TotalClusters.QuadPart)
-      throw std::runtime_error("bitmap size != nvdb total clusters\n");
-
-    if ((bitmap->StartingLcn).QuadPart != 0)
-      throw std::runtime_error("bitmap startingLCN != 0\n");
-
-    //DumpData("bitmap", bitmap->Buffer, (bitmap->BitmapSize.QuadPart)/8 + ( ((bitmap->BitmapSize.QuadPart)%8) ? 1 : 0 ));
-
-    return std::make_tuple(nvdb, bitmap);
+    return nvdb;
   }
 
   LONGLONG GetPartitionLength(HANDLE hVolume)
