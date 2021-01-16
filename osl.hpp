@@ -64,7 +64,7 @@ namespace OSL
 
     if (!dir.size())
     {
-      dir = std::filesystem::current_path().string();
+      dir = getenv("USERPROFILE");//std::filesystem::current_path().string();
     }
 
     std::vector<Json> list;
@@ -75,7 +75,11 @@ namespace OSL
 
       j.SetKey("name", e.path().filename().string());
     
-      if (std::filesystem::is_directory(e))
+      if (std::filesystem::is_symlink(e))
+      {
+        j.SetKey("type", "symlink");
+      }
+      else if (std::filesystem::is_directory(e))
       {
         j.SetKey("type", "directory");
       }
