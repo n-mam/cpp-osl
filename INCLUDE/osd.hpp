@@ -247,5 +247,35 @@ namespace OSL
 
     return out;
   }
+
+  auto GetFileHandle(const std::string& file)
+  {
+    return CreateFileA(
+      file.c_str(),
+      GENERIC_READ|GENERIC_WRITE,
+      FILE_SHARE_READ|FILE_SHARE_WRITE,
+      NULL,
+      OPEN_EXISTING,
+      FILE_ATTRIBUTE_NORMAL,
+      NULL);
+  }
+
+  auto GetVolumeHandle(const std::string& name)
+  {
+    char _guid[128] = { 0 };
+
+    GetVolumeNameForVolumeMountPointA(
+      (name.back() == '\\') ? 
+         name.c_str() : (name + "\\").c_str(), 
+      _guid, 
+      sizeof(_guid)
+    );
+
+    _guid[strlen(_guid) - 1] = '\0';
+
+    return GetFileHandle(_guid);
+  }
+
 }
+
 #endif

@@ -5,6 +5,7 @@
 #include <util.hpp>
 #include <osd.hpp>
 
+#include <string>
 #include <filesystem>
 
 namespace OSL
@@ -29,6 +30,17 @@ namespace OSL
       }
 
       j.SetKey("paths", rtrim(paths, " "));
+
+      auto h = GetVolumeHandle(names[0]);
+
+      j.SetKey("length", std::to_string(GetPartitionLength(h)));
+
+      auto nvdb = GetNTFSVolumeData(h);
+
+      j.SetKey("TotalClusters", std::to_string(nvdb.TotalClusters.QuadPart));
+      j.SetKey("FreeClusters", std::to_string(nvdb.FreeClusters.QuadPart));
+
+      CloseHandle(h);
 
       list.push_back(j);
     }

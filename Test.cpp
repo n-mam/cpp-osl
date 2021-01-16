@@ -19,5 +19,11 @@ int main(void)
 
   std::cout << json.Stringify() << "\n";
 
+  auto h = OSL::GetVolumeHandle("C:");
+
+  h = OSL::GetVolumeHandle("C:\\");
+
+  h = OSL::GetVolumeHandle("C:\\Test\\");
+
   return 0;
 }
