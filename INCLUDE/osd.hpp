@@ -249,6 +249,18 @@ namespace OSL
     return out;
   }
 
+  auto GetFileHandleW(const std::wstring& file)
+  {
+    return CreateFileW(
+      file.c_str(),
+      GENERIC_READ|GENERIC_WRITE,
+      FILE_SHARE_READ|FILE_SHARE_WRITE,
+      NULL,
+      OPEN_EXISTING,
+      FILE_ATTRIBUTE_NORMAL,
+      NULL);
+  }
+
   auto GetFileHandle(const std::string& file)
   {
     return CreateFileA(
@@ -281,6 +293,49 @@ namespace OSL
     }
 
     return h;
+  }
+
+  auto GetVolumeDiskExtents(const std::wstring& volume)
+  {
+    std::vector<int> disks;
+
+    HANDLE hSource = GetFileHandleW(volume.c_str());
+
+    if (hSource == INVALID_HANDLE_VALUE)
+    {
+      std::cout << "Failed to open source volume, error : " << GetLastError() << "\n";
+      return disks;
+    }
+
+    VOLUME_DISK_EXTENTS volumeDiskExtents;
+    DWORD dwBytesReturned = 0;
+
+    BOOL fRet = DeviceIoControl(
+                  hSource,
+                  IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS,
+                  NULL,
+                  0,
+                  &volumeDiskExtents,
+                  sizeof(volumeDiskExtents),
+                  &dwBytesReturned,
+                  NULL);
+
+    CloseHandle(hSource);
+
+    if (fRet == FALSE)
+    {
+      std::cout << "IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS failed on source, error : " << GetLastError() << "\n";
+      return disks;
+    }
+
+    for (DWORD i = 0; i < volumeDiskExtents.NumberOfDiskExtents; i++)
+    {
+      PDISK_EXTENT extent = &volumeDiskExtents.Extents[i];
+
+      disks.push_back(extent->DiskNumber);
+    }
+
+    return disks;
   }
 
 }
