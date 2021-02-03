@@ -338,6 +338,46 @@ namespace OSL
     return disks;
   }
 
+  auto SetRegistry(HKEY hKey, std::wstring subKey, DWORD dwType, std::wstring valueName, std::wstring value)
+  {
+    HKEY hkResult;
+    LSTATUS status;
+
+    status = RegCreateKeyExW(
+               hKey,
+               subKey.c_str(),
+               0,
+               NULL,
+               REG_OPTION_NON_VOLATILE,
+               KEY_ALL_ACCESS,
+               NULL,
+               &hkResult,
+               NULL);
+
+    if (status != ERROR_SUCCESS)
+    {
+      std::cout << "RegCreateKeyExW() failed " << status << "\n";
+      return false;
+    }
+  
+    status = RegSetValueExW(
+               hkResult,
+               valueName.c_str(),
+               0,
+               dwType,
+               (BYTE*)value.c_str(),
+               (DWORD)value.length() * sizeof(WCHAR));
+
+    if (status != ERROR_SUCCESS)
+    {
+      std::cout << "RegSetValueExW() failed " << status << "\n";
+    }
+
+    RegCloseKey(hkResult);
+  
+    return (status == ERROR_SUCCESS);
+  }
+
 }
 
 #endif
