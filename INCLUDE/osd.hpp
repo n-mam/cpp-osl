@@ -378,6 +378,32 @@ namespace OSL
     return (status == ERROR_SUCCESS);
   }
 
+  BSTR ReadFromFile(const std::wstring& fileName)
+  {
+    HANDLE hFile = GetFileHandleW(fileName.c_str());
+
+    if (hFile == INVALID_HANDLE_VALUE)
+    {
+      std::cout << "CreateFile failed : "<< GetLastError() << "\n";
+      return NULL;
+    }
+
+    DWORD dwFileSize = GetFileSize(hFile, 0);
+    std::wstring contents(dwFileSize / sizeof(WCHAR), L'\0');
+
+    DWORD dwRead;
+    BOOL fRet = ReadFile(hFile, (LPWSTR)contents.c_str(), dwFileSize, &dwRead, NULL);
+
+    if (fRet == FALSE)
+    {
+      return NULL;
+    }
+
+    BSTR bstrContents = SysAllocStringLen(contents.data(), contents.size());
+
+    return bstrContents;
+  }
+
 }
 
 #endif
