@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <iostream>
 
 namespace OSL
@@ -378,7 +379,7 @@ namespace OSL
     return (status == ERROR_SUCCESS);
   }
 
-  BSTR ReadFromFile(const std::wstring& fileName)
+  BSTR ReadFileAsBSTR(const std::wstring& fileName)
   {
     HANDLE hFile = GetFileHandleW(fileName.c_str());
 
@@ -389,17 +390,17 @@ namespace OSL
     }
 
     DWORD dwFileSize = GetFileSize(hFile, 0);
-    std::wstring contents(dwFileSize / sizeof(WCHAR), L'\0');
+    auto buf = std::make_unique<uint8_t []>(dwFileSize);
 
     DWORD dwRead;
-    BOOL fRet = ReadFile(hFile, (LPWSTR)contents.c_str(), dwFileSize, &dwRead, NULL);
+    BOOL fRet = ReadFile(hFile, buf.get(), dwFileSize, &dwRead, NULL);
 
     if (fRet == FALSE)
     {
       return NULL;
     }
 
-    BSTR bstrContents = SysAllocStringLen(contents.data(), contents.size());
+    BSTR bstrContents = SysAllocStringLen((OLECHAR *)buf.get(), dwRead);
 
     return bstrContents;
   }
