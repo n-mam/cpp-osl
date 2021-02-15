@@ -52,7 +52,6 @@ std::vector<std::wstring> wsplit(std::wstring s, std::wstring delim)
     return res;
 }
 
-
 std::string& ltrim(std::string& str, const std::string& chars)
 {
     str.erase(0, str.find_first_not_of(chars));
