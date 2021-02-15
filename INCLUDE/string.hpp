@@ -36,6 +36,23 @@ std::vector<std::string> split(std::string s, std::string delim)
     return res;
 }
 
+std::vector<std::wstring> wsplit(std::wstring s, std::wstring delim) 
+{
+    size_t pos_start = 0, pos_end, delim_len = delim.length();
+    std::wstring token;
+    std::vector<std::wstring> res;
+
+    while ((pos_end = s.find (delim, pos_start)) != std::string::npos) 
+    {
+        token = s.substr (pos_start, pos_end - pos_start);
+        pos_start = pos_end + delim_len;
+        res.push_back (token);
+    }
+
+    return res;
+}
+
+
 std::string& ltrim(std::string& str, const std::string& chars)
 {
     str.erase(0, str.find_first_not_of(chars));

@@ -4,6 +4,7 @@
 #include <json.hpp>
 #include <util.hpp>
 #include <osd.hpp>
+#include <string.hpp>
 
 #include <string>
 #include <filesystem>
