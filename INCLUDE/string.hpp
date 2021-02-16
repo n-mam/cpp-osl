@@ -49,6 +49,8 @@ std::vector<std::wstring> wsplit(std::wstring s, std::wstring delim)
         res.push_back (token);
     }
 
+    res.push_back (s.substr (pos_start));
+
     return res;
 }
 
