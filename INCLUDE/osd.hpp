@@ -10,6 +10,30 @@
 
 namespace OSL
 {
+  class DllHelper
+  {
+    public:
+
+      DllHelper(const std::string& dll)
+      {
+        hDll = LoadLibraryA(dll.c_str());
+      }
+
+      ~DllHelper()
+      {
+        FreeLibrary(hDll);
+      }
+
+      auto operator[](const std::string& proc) const 
+      {
+        return GetProcAddress(hDll, proc.c_str());
+      }
+
+    private:
+
+      HMODULE hDll;
+  };
+
   HANDLE OpenVirtualDisk(const std::wstring& file)
   {
     DWORD fRet;
@@ -23,13 +47,23 @@ namespace OSL
       { 0xEC984AEC, 0xA0F9, 0x47e9, { 0x90, 0x1F, 0x71, 0x41, 0x5A, 0x66, 0x34, 0x5B } }
     };
 
-    fRet = OpenVirtualDisk(
-             &vst,
-             file.c_str(),
-             (VIRTUAL_DISK_ACCESS_MASK) 0,
-             OPEN_VIRTUAL_DISK_FLAG_NONE,
-             &params,
-             &hvhd);
+    DllHelper virtDiskAPI("virtdisk.dll");
+
+    auto pfn = (decltype(::OpenVirtualDisk) *) virtDiskAPI["OpenVirtualDisk"];
+
+    if (pfn == NULL)
+    {
+      std::cout << "failed to get poinetr to OpenVirtualDisk " << GetLastError() << "\n";
+      return hvhd;
+    }
+
+    fRet = pfn(
+      &vst,
+      file.c_str(),
+      (VIRTUAL_DISK_ACCESS_MASK) 0,
+      OPEN_VIRTUAL_DISK_FLAG_NONE,
+      &params,
+      &hvhd);
 
     if (fRet != ERROR_SUCCESS)
     {
@@ -48,13 +82,23 @@ namespace OSL
     ATTACH_VIRTUAL_DISK_PARAMETERS params = { 0 };
     params.Version = ATTACH_VIRTUAL_DISK_VERSION_1;
 
-    auto fRet = AttachVirtualDisk(
-                  hvhd,
-                  NULL,
-                  ATTACH_VIRTUAL_DISK_FLAG_READ_ONLY|ATTACH_VIRTUAL_DISK_FLAG_NO_DRIVE_LETTER,
-                  0,
-                  &params,
-                  NULL);
+    DllHelper virtDiskAPI("virtdisk.dll");
+
+    auto pfn = (decltype(AttachVirtualDisk) *) virtDiskAPI["AttachVirtualDisk"];
+
+    if (pfn == NULL)
+    {
+      std::cout << "Failed to get poinetr to AttachVirtualDisk " << GetLastError() << "\n";
+      return INVALID_HANDLE_VALUE;
+    }
+
+    auto fRet = pfn(
+       hvhd,
+       NULL,
+       ATTACH_VIRTUAL_DISK_FLAG_READ_ONLY|ATTACH_VIRTUAL_DISK_FLAG_NO_DRIVE_LETTER,
+       0,
+       &params,
+       NULL);
 
     if (fRet != ERROR_SUCCESS)
     {
@@ -70,7 +114,17 @@ namespace OSL
     wchar_t buf[128] = { L'\0' };
     ULONG bufSize = sizeof(buf);
 
-    auto fRet = GetVirtualDiskPhysicalPath(hvhd, &bufSize, buf);
+    DllHelper virtDiskAPI("virtdisk.dll");
+
+    auto pfn = (decltype(GetVirtualDiskPhysicalPath) *) virtDiskAPI["GetVirtualDiskPhysicalPath"];
+
+    if (pfn == NULL)
+    {
+      std::cout << "Failed to get poinetr to GetVirtualDiskPhysicalPath " << GetLastError() << "\n";
+      return std::string();
+    }
+
+    auto fRet = pfn(hvhd, &bufSize, buf);
 
     if (fRet != ERROR_SUCCESS)
     {
@@ -404,7 +458,6 @@ namespace OSL
 
     return bstrContents;
   }
-
 }
 
 #endif

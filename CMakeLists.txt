@@ -23,5 +23,4 @@ target_include_directories(
 
 target_link_libraries(
   TestOSL
-  virtdisk.lib
 )
