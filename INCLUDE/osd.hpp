@@ -1,6 +1,7 @@
 #ifndef OSD_HPP
 #define OSD_HPP
 
+#include <windows.h>
 #include <virtdisk.h>
 
 #include <string>
