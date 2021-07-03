@@ -394,6 +394,21 @@ namespace OSL
     return disks;
   }
 
+  auto WideToString(const std::wstring& src)
+  {
+    std::vector<CHAR> chBuffer;
+
+    int iChars = WideCharToMultiByte(CP_ACP, 0, src.c_str(), -1, NULL, 0, NULL, NULL);
+
+    if (iChars > 0)
+    {
+      chBuffer.resize(iChars);
+      WideCharToMultiByte(CP_ACP, 0, src.c_str(), -1, &chBuffer.front(), (int)chBuffer.size(), NULL, NULL);
+    }
+
+    return std::string(&chBuffer.front());
+  }
+
   auto SetRegistry(HKEY hKey, std::wstring subKey, DWORD dwType, std::wstring valueName, std::wstring value)
   {
     HKEY hkResult;

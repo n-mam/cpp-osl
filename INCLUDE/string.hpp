@@ -83,18 +83,4 @@ bool StartsWith(std::wstring& str, std::wstring prefix)
   return fRet;
 }
 
-auto WStringToString(const std::wstring& src)
-{
-  std::vector<CHAR> chBuffer;
-
-  int iChars = WideCharToMultiByte(CP_ACP, 0, src.c_str(), -1, NULL, 0, NULL, NULL);
-
-  if (iChars > 0)
-  {
-    chBuffer.resize(iChars);
-    WideCharToMultiByte(CP_ACP, 0, src.c_str(), -1, &chBuffer.front(), (int)chBuffer.size(), NULL, NULL);
-  }
-
-  return std::string(&chBuffer.front());
-}
 #endif //
