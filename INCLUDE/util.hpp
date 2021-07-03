@@ -2,6 +2,7 @@
 #define UTIL_HPP
 
 #include <string>
+#include <vector>
 #include <cstdint>
 #include <iostream>
 #include <assert.h>

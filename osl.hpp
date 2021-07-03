@@ -100,6 +100,30 @@ namespace OSL
   {
 
   }
+
+  auto GetArgumentsVector(int argc, wchar_t *argv[])
+  {
+    std::vector<std::wstring> arguments;
+
+    for(int i = 1; i < argc; i++)
+    {
+      arguments.push_back(argv[i]);
+    }
+
+    return arguments;
+  }
+
+  auto GetArgumentsVector(int argc, char *argv[])
+  {
+    std::vector<std::string> arguments;
+
+    for(int i = 1; i < argc; i++)
+    {
+      arguments.push_back(argv[i]);
+    }
+
+    return arguments;
+  }
 }
 
 #endif //OSL_HPP
