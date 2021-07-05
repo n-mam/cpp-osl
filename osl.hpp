@@ -65,7 +65,7 @@ namespace OSL
 
     if (!dir.size())
     {
-      dir = getenv("USERPROFILE");//std::filesystem::current_path().string();
+      dir = std::filesystem::current_path().string();
     }
 
     std::vector<Json> list;
