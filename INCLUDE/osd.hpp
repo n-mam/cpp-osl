@@ -74,11 +74,9 @@ namespace OSL
     return hvhd;
   }
 
-  HANDLE AttachVHD(const std::string& source)
+  HANDLE AttachVHD(const std::wstring& source)
   {
-    HANDLE hvhd = OpenVirtualDisk(
-      std::wstring(source.begin(), source.end())
-    );
+    HANDLE hvhd = OpenVirtualDisk(source);
 
     ATTACH_VIRTUAL_DISK_PARAMETERS params = { 0 };
     params.Version = ATTACH_VIRTUAL_DISK_VERSION_1;
@@ -305,7 +303,7 @@ namespace OSL
     return out;
   }
 
-  auto GetFileHandleW(const std::wstring& file)
+  auto GetFileHandle(const std::wstring& file)
   {
     return CreateFileW(
       file.c_str(),
@@ -332,30 +330,46 @@ namespace OSL
   auto GetVolumeHandle(const std::string& name)
   {
     char _guid[128] = { 0 };
-    HANDLE h = INVALID_HANDLE_VALUE;
 
-    BOOL fRet = GetVolumeNameForVolumeMountPointA(
+    auto fRet = GetVolumeNameForVolumeMountPointA(
       (name.back() == '\\') ? 
          name.c_str() : (name + "\\").c_str(), 
       _guid, 
-      sizeof(_guid)
-    );
+      sizeof(_guid));
 
     if (fRet)
     {
       _guid[strlen(_guid) - 1] = '\0';
-
-      h = GetFileHandle(_guid);
+      return GetFileHandle(_guid);
     }
 
-    return h;
+    return INVALID_HANDLE_VALUE;
+  }
+
+  auto GetVolumeHandle(const std::wstring& name)
+  {
+    wchar_t _guid[128] = { 0 };
+
+    auto fRet = GetVolumeNameForVolumeMountPointW(
+      (name.back() == L'\\') ? 
+         name.c_str() : (name + L"\\").c_str(), 
+      _guid, 
+      sizeof(_guid));
+
+    if (fRet)
+    {
+      _guid[wcslen(_guid) - 1] = L'\0';
+      return GetFileHandle(_guid);
+    }
+
+    return INVALID_HANDLE_VALUE;
   }
 
   auto GetVolumeDiskExtents(const std::wstring& volume)
   {
     std::vector<int> disks;
 
-    HANDLE hSource = GetFileHandleW(volume.c_str());
+    HANDLE hSource = GetFileHandle(volume);
 
     if (hSource == INVALID_HANDLE_VALUE)
     {
@@ -451,7 +465,7 @@ namespace OSL
 
   BSTR ReadFileAsBSTR(const std::wstring& fileName)
   {
-    HANDLE hFile = GetFileHandleW(fileName.c_str());
+    HANDLE hFile = GetFileHandle(fileName);
 
     if (hFile == INVALID_HANDLE_VALUE)
     {
