@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <sstream>
+#include <string>
+#include <algorithm>
 
 std::vector<std::string> split(const std::string &s, char delim)
 {
@@ -81,6 +83,16 @@ bool StartsWith(std::wstring& str, std::wstring prefix)
   }
 
   return fRet;
+}
+
+void RemoveDuplicates(std::string& str, const char& ch)
+{
+  auto new_end = std::unique(str.begin(), str.end(), 
+    [ch](char lhs, char rhs) {
+      return (lhs == rhs) && (lhs == ch);
+    });
+
+  str.erase(new_end, str.end());
 }
 
 #endif //
